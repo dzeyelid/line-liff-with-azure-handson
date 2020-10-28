@@ -19,6 +19,9 @@ export default defineComponent({
   computed: {
     lineVersion(): string | null {
       return this.liffService.getLineVersion();
+    },
+    isLoggedIn(): boolean {
+      return this.liffService.isLoggeeIn();
     }
   }
 });

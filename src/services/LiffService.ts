@@ -20,8 +20,11 @@ export class LiffService {
     return liff.getLineVersion();
   }
 
+  public isLoggeeIn() {
+    return liff.isLoggedIn();
+  }
+
   private async initializeLib() {
     await liff.init({ liffId: defaultLiffId });
   }
-
 }
