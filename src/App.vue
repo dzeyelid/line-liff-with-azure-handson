@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import liff from "@line/liff";
 import HelloWorld from "./components/HelloWorld.vue";
 import LiffDev from "./components/LiffDev.vue";
 
@@ -15,12 +14,6 @@ export default defineComponent({
   components: {
     HelloWorld,
     LiffDev
-  },
-  async beforeCreate() {
-    await liff.init({ liffId: "playround-line-liff" });
-    if (!liff.isLoggedIn()) {
-      liff.login();
-    }
   }
 });
 </script>
