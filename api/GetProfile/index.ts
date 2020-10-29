@@ -6,52 +6,68 @@ type BodyParams = {
   token: string
 }
 
-type LineVerifyBody = {
+type LineIdtokenVerifyBody = {
   id_token: string
   client_id: string
 }
 
-const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    // context.log('HTTP trigger function processed a request.');
-    // const name = (req.query.name || (req.body && req.body.name));
-    // const responseMessage = name
-    //     ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-    //     : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+// type LineRefreshTokenBody = {
+//   grant_type: "refresh_token"
+//   refresh_token: string
+//   client_id: string
+//   client_secret?: string
+// }
 
-    // context.res = {
-    //     // status: 200, /* Defaults to 200 */
-    //     body: responseMessage
+type LineAccessTokenVerifyParams = {
+  access_token: string
+}
+
+const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+  // try {
+  //   const bodyParams = req.body as BodyParams;
+    // const body: LineIdtokenVerifyBody = {
+    //   id_token: bodyParams.token,
+    //   client_id: process.env.LINE_CHANNEL_ID || ''
     // };
+    // console.log(`body: ${body}`);
+    // const verifyResult = await axios.post(
+    //   "https://api.line.me/oauth2/v2.1/verify",
+    //   querystring.stringify(body),
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/x-www-form-urlencoded"
+    //     },
+    //   }
+    // );
 
   try {
     const bodyParams = req.body as BodyParams;
-    const body: LineVerifyBody = {
-      id_token: bodyParams.token,
-      client_id: process.env.LINE_CHANNEL_ID || ''
+    const params: LineAccessTokenVerifyParams = {
+      access_token: bodyParams.token
     };
-    // const formData = new FormData();
-    // formData.append('id_token', bodyParams.token);
-    // formData.append('client_id', process.env.LINE_CHANNEL_ID || '');
-    console.log(`body: ${body}`);
-    const response = await axios.post(
-      "https://api.line.me/oauth2/v2.1/verify",
-      querystring.stringify(body),
+    const verifyResult = await axios.get(
+      `https://api.line.me/oauth2/v2.1/verify?${querystring.stringify(params)}`
+    );
+    console.log(`verifyResult: ${JSON.stringify(verifyResult)}`);
+
+    const profile = await axios.post(
+      "https://api.line.me/v2/profile",
       {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
+          "Authorization": bodyParams.token
+        }
       }
-    );
+    )
     context.res = {
       status: 200,
-      body: response.data
+      body: profile.data
     }
   } catch (e) {
-    console.log(e);
     context.res = {
       status: 500,
-      body: e
+      body: JSON.stringify(e)
     }
+    return;
   }
 };
 

@@ -3,7 +3,6 @@
     <div>LIFF dev</div>
     <div>{{ lineVersion }}</div>
     <div>{{ isLoggedIn }}</div>
-    <div>{{ idToken }}</div>
     <button @click="getProfile">Get profile</button>
     <div>{{ response }}</div>
   </div>
@@ -14,7 +13,7 @@ import { defineComponent } from "vue";
 import liff from "@line/liff";
 import isInClient from "@line/liff/dist/lib/common/isInClient";
 
-const defaultLiffId = "1655108829-e0bBYjYW";
+const defaultLiffId = process.env.VUE_APP_LIFF_ID || '';
 
 export default defineComponent({
   name: "LiffDev",
@@ -22,7 +21,6 @@ export default defineComponent({
     return {
       lineVersion: '',
       isLoggedIn: false,
-      idToken: '',
       response: ''
     };
   },
@@ -47,18 +45,16 @@ export default defineComponent({
 
       this.isLoggedIn = liff.isLoggedIn();
       console.log(`loggedIn: ${liff.isLoggedIn()}`);
-
-      const idToken = liff.getIDToken();
-      if (idToken) {
-        this.idToken = idToken;
-      }
     },
     async getProfile() {
       console.log("getProfile()");
-      const response = await fetch('/api/GetProfile', {
+      const accessToken = liff.getAccessToken();
+      console.log(`accessToken: ${accessToken}`);
+      const url = "/api/GetProfile";
+      const response = await fetch(url, {
           method: "POST",
           body: JSON.stringify({
-            token: this.idToken
+            token: accessToken
           })
       });
       this.response = await response.json();
