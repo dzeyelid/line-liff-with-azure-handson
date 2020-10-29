@@ -25,20 +25,20 @@ type LineAccessTokenVerifyParams = {
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
   // try {
   //   const bodyParams = req.body as BodyParams;
-    // const body: LineIdtokenVerifyBody = {
-    //   id_token: bodyParams.token,
-    //   client_id: process.env.LINE_CHANNEL_ID || ''
-    // };
-    // console.log(`body: ${body}`);
-    // const verifyResult = await axios.post(
-    //   "https://api.line.me/oauth2/v2.1/verify",
-    //   querystring.stringify(body),
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/x-www-form-urlencoded"
-    //     },
-    //   }
-    // );
+  // const body: LineIdtokenVerifyBody = {
+  //   id_token: bodyParams.token,
+  //   client_id: process.env.LINE_CHANNEL_ID || ''
+  // };
+  // console.log(`body: ${body}`);
+  // const verifyResult = await axios.post(
+  //   "https://api.line.me/oauth2/v2.1/verify",
+  //   querystring.stringify(body),
+  //   {
+  //     headers: {
+  //       "Content-Type": "application/x-www-form-urlencoded"
+  //     },
+  //   }
+  // );
 
   try {
     const bodyParams = req.body as BodyParams;
@@ -48,13 +48,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const verifyResult = await axios.get(
       `https://api.line.me/oauth2/v2.1/verify?${querystring.stringify(params)}`
     );
-    console.log(`verifyResult: ${JSON.stringify(verifyResult)}`);
-
-    const profile = await axios.post(
+    const profile = await axios.get(
       "https://api.line.me/v2/profile",
       {
         headers: {
-          "Authorization": bodyParams.token
+          "Authorization": `Bearer ${bodyParams.token}`
         }
       }
     )
