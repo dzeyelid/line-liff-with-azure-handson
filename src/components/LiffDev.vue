@@ -7,23 +7,32 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import liff from "@line/liff";
-// import { LiffService } from "../services/LiffService";
+
+const defaultLiffId = "1655108829-e0bBYjYW";
 
 export default defineComponent({
   name: "LiffDev",
   data() {
     return {
-      lineVersion: liff.getLineVersion(),
-      isLoggedIn: liff.isLoggedIn()
+      lineVersion: '',
+      isLoggedIn: false
     };
   },
-  // computed: {
-  //   lineVersion(): string | null {
-  //     return this.liffService.getLineVersion();
-  //   },
-  //   isLoggedIn(): boolean {
-  //     return this.liffService.isLoggeeIn();
-  //   }
-  // }
+  async created() {
+    console.log('created() in App');
+    liff.ready
+      .then(this.initialized);
+    await liff.init({ liffId: defaultLiffId });
+  },
+  methods: {
+    initialized(): void {
+      console.log('initlized()');
+      const lineVersion = liff.getLineVersion();
+      if (lineVersion) {
+        this.lineVersion = lineVersion;
+      }
+      this.isLoggedIn = liff.isLoggedIn();
+    }
+  }
 });
 </script>
