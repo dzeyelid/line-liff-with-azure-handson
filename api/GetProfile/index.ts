@@ -22,14 +22,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // };
 
   const bodyParams = req.body as BodyParams;
-  const body: LineVerifyBody = {
-    id_token: bodyParams.token,
-    client_id: process.env.LINE_CHANNEL_ID || ''
-  };
+  const formData = new FormData();
+  formData.append('id_token', bodyParams.token);
+  formData.append('client_id', process.env.LINE_CHANNEL_ID || '');
   const response = await fetch("https://api.line.me/oauth2/v2.1/verify", {
     method: "POST",
-    body: JSON.stringify(body)
-  })
+    body: formData
+  });
   context.res = {
     status: 200,
     body: response.json()

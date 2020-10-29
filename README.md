@@ -14,3 +14,5 @@ cd api
 npm install
 npm run start
 ```
+
+set environment variable `LINE_CHANNEL_ID` in Azure Static Web Apps
