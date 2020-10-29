@@ -1,4 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import axios from "axios";
+import * as querystring from "querystring";
 
 type BodyParams = {
   token: string
@@ -31,16 +33,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // formData.append('id_token', bodyParams.token);
     // formData.append('client_id', process.env.LINE_CHANNEL_ID || '');
     console.log(`body: ${body}`);
-    const response = await fetch("https://api.line.me/oauth2/v2.1/verify", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: JSON.stringify(body)
-    });
+    const response = await axios.post(
+      "https://api.line.me/oauth2/v2.1/verify",
+      querystring.stringify(body),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+      }
+    );
     context.res = {
       status: 200,
-      body: response.json()
+      body: response.data
     }
   } catch (e) {
     console.log(e);
