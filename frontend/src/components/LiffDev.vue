@@ -1,7 +1,10 @@
 <template>
-  <div>LIFF dev</div>
-  <div>{{ lineVersion }}</div>
-  <div>{{ isLoggedIn }}</div>
+  <div>
+    <div>LIFF dev</div>
+    <div>{{ lineVersion }}</div>
+    <div>{{ isLoggedIn }}</div>
+    <button @click="getProfile">Get profile</button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -15,7 +18,8 @@ export default defineComponent({
   data() {
     return {
       lineVersion: '',
-      isLoggedIn: false
+      isLoggedIn: false,
+      idToken: '',
     };
   },
   async created() {
@@ -31,7 +35,20 @@ export default defineComponent({
       if (lineVersion) {
         this.lineVersion = lineVersion;
       }
+
       this.isLoggedIn = liff.isLoggedIn();
+
+      const idToken = liff.getIDToken();
+      if (idToken) {
+        this.idToken = idToken;
+      }
+    },
+    async getProfile() {
+      console.log("getProfile()");
+      const result = await fetch('/api/GetProfile', {
+          method: "POST"
+      });
+      console.log(`result: ${JSON.stringify(result)}`);
     }
   }
 });

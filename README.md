@@ -1,24 +1,16 @@
-# playground-line-liff
+# LIFF dev
 
-## Project setup
+## How to prepare
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=linux%2Cts%2Cbash#v2
+
+```bash
+npm install -g @vue/cli
+npm install -g typescript
 ```
+
+```bash
+cd api
 npm install
+npm run start
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
