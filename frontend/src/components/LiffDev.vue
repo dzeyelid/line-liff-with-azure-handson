@@ -3,13 +3,16 @@
     <div>LIFF dev</div>
     <div>{{ lineVersion }}</div>
     <div>{{ isLoggedIn }}</div>
+    <div>{{ idToken }}</div>
     <button @click="getProfile">Get profile</button>
+    <div>{{ response }}</div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import liff from "@line/liff";
+import isInClient from "@line/liff/dist/lib/common/isInClient";
 
 const defaultLiffId = "1655108829-e0bBYjYW";
 
@@ -20,6 +23,7 @@ export default defineComponent({
       lineVersion: '',
       isLoggedIn: false,
       idToken: '',
+      response: ''
     };
   },
   async created() {
@@ -31,12 +35,18 @@ export default defineComponent({
   methods: {
     initialized(): void {
       console.log('initlized()');
+      console.log(`isInClient: ${liff.isInClient()}`);
+      if (!liff.isInClient() && !liff.isLoggedIn()) {
+        liff.login();
+      }
+
       const lineVersion = liff.getLineVersion();
       if (lineVersion) {
         this.lineVersion = lineVersion;
       }
 
       this.isLoggedIn = liff.isLoggedIn();
+      console.log(`loggedIn: ${liff.isLoggedIn()}`);
 
       const idToken = liff.getIDToken();
       if (idToken) {
@@ -45,10 +55,13 @@ export default defineComponent({
     },
     async getProfile() {
       console.log("getProfile()");
-      const result = await fetch('/api/GetProfile', {
-          method: "POST"
+      const response = await fetch('/api/GetProfile', {
+          method: "POST",
+          body: JSON.stringify({
+            token: this.idToken
+          })
       });
-      console.log(`result: ${JSON.stringify(result)}`);
+      this.response = await response.json();
     }
   }
 });
