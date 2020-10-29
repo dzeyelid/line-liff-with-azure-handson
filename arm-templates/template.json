@@ -1,0 +1,117 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "identifier": {
+      "type": "string"
+    },
+    "staticWebAppLocation": {
+      "type": "string",
+      "defaultValue": "eastasia",
+      "allowedValues": [
+        "centralus",
+        "eastus2",
+        "eastasia",
+        "westeurope",
+        "westus2"
+      ]
+    },
+    "staticWebAppSku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free"
+      ]
+    },
+    "staticWebAppSkucode": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free"
+      ]
+    },
+    "staticWebAppRepositoryUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Set https url"
+      }
+    },
+    "staticWebAppRepositoryToken": {
+      "type": "securestring"
+    },
+    "staticWebAppBranch": {
+      "type": "string",
+      "defaultValue": "master"
+    },
+    "staticWebAppAppLocation": {
+      "type": "string",
+      "defaultValue": "frontend"
+    },
+    "staticWebAppApiLocation": {
+      "type": "string",
+      "defaultValue": "api"
+    },
+    "staticWebAppAppArtifactLocation": {
+      "type": "string",
+      "defaultValue": "dist"
+    },
+    "staticWebAppExists": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "cosmosDbEnableFreeTier": {
+      "type": "bool",
+      "defaultValue": true
+    }
+  },
+  "functions": [],
+  "variables": {
+    "staticWebAppName": "[concat('static-', parameters('identifier'))]",
+    "cosmosDbAccountMame": "[concat('cosmos-', parameters('identifier'))]"
+  },
+  "resources": [
+    {
+      "condition": "[not(parameters('staticWebAppExists'))]",
+      "name": "[variables('staticWebAppName')]",
+      "type": "Microsoft.Web/staticSites",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('staticWebAppLocation')]",
+      "properties": {
+        "repositoryUrl": "[parameters('staticWebAppRepositoryUrl')]",
+        "branch": "[parameters('staticWebAppBranch')]",
+        "repositoryToken": "[parameters('staticWebAppRepositoryToken')]",
+        "buildProperties": {
+          "appLocation": "[parameters('staticWebAppAppLocation')]",
+          "apiLocation": "[parameters('staticWebAppApiLocation')]",
+          "appArtifactLocation": "[parameters('staticWebAppAppArtifactLocation')]"
+        }
+      },
+      "sku": {
+        "Tier": "[parameters('staticWebAppSku')]",
+        "Name": "[parameters('staticWebAppSkucode')]"
+      }
+    },
+    {
+      "name": "[variables('cosmosDbAccountMame')]",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2020-04-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+      },
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session"
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]"
+          }
+        ],
+        "databaseAccountOfferType": "Standard",
+        "enableFreeTier": "[parameters('cosmosDbEnableFreeTier')]"
+      }
+    }
+  ],
+  "outputs": {}
+}
