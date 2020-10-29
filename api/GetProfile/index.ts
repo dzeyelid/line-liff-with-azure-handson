@@ -23,18 +23,27 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
   try {
     const bodyParams = req.body as BodyParams;
-    const formData = new FormData();
-    formData.append('id_token', bodyParams.token);
-    formData.append('client_id', process.env.LINE_CHANNEL_ID || '');
+    const body: LineVerifyBody = {
+      id_token: bodyParams.token,
+      client_id: process.env.LINE_CHANNEL_ID || ''
+    };
+    // const formData = new FormData();
+    // formData.append('id_token', bodyParams.token);
+    // formData.append('client_id', process.env.LINE_CHANNEL_ID || '');
+    console.log(`body: ${body}`);
     const response = await fetch("https://api.line.me/oauth2/v2.1/verify", {
       method: "POST",
-      body: formData
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: JSON.stringify(body)
     });
     context.res = {
       status: 200,
       body: response.json()
     }
   } catch (e) {
+    console.log(e);
     context.res = {
       status: 500,
       body: e
