@@ -19,6 +19,14 @@ az deployment group validate \
     staticWebAppRepositoryUrl="${GITHUB_REPOSITORY_URL}" \
     staticWebAppRepositoryToken="${GITHUB_ACCESS_TOKEN}"
 
+az deployment group what-if \
+  --resource-group ${RESOURCE_GROUP} \
+  --template-file template.json \
+  --parameters \
+    identifier="${IDENTIFIER}" \
+    staticWebAppRepositoryUrl="${GITHUB_REPOSITORY_URL}" \
+    staticWebAppRepositoryToken="${GITHUB_ACCESS_TOKEN}"
+
 az deployment group create \
   --resource-group ${RESOURCE_GROUP} \
   --template-file template.json \

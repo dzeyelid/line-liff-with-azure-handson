@@ -62,12 +62,27 @@
     "cosmosDbEnableFreeTier": {
       "type": "bool",
       "defaultValue": true
+    },
+    "cosmosDbDatabaseThroughput": {
+      "type": "int",
+      "defaultValue": 400
     }
   },
   "functions": [],
   "variables": {
     "staticWebAppName": "[concat('static-', parameters('identifier'))]",
-    "cosmosDbAccountMame": "[concat('cosmos-', parameters('identifier'))]"
+    "cosmosDbAccountName": "[concat('cosmos-', parameters('identifier'))]",
+    "cosmosDbDatabaseName": "games",
+    "cosmosDbContainers": [
+      {
+        "name": "global-results",
+        "partitionKeyPath": "/stage/id"
+      },
+      {
+        "name": "player-results",
+        "partitionKeyPath": "/lineUser/id"
+      }
+    ]
   },
   "resources": [
     {
@@ -92,7 +107,7 @@
       }
     },
     {
-      "name": "[variables('cosmosDbAccountMame')]",
+      "name": "[variables('cosmosDbAccountName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2020-04-01",
       "location": "[resourceGroup().location]",
@@ -105,11 +120,54 @@
         },
         "locations": [
           {
-            "locationName": "[resourceGroup().location]"
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0
           }
         ],
         "databaseAccountOfferType": "Standard",
         "enableFreeTier": "[parameters('cosmosDbEnableFreeTier')]"
+      },
+      "resources": [
+        {
+          "name": "[variables('cosmosDbDatabaseName')]",
+          "type": "sqlDatabases",
+          "apiVersion": "2020-04-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "resource": {
+              "id": "[variables('cosmosDbDatabaseName')]"
+            },
+            "options": {
+              "throughput": "[parameters('cosmosDbDatabaseThroughput')]"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName'))]"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[concat(variables('cosmosDbAccountName'), '/', variables('cosmosDbDatabaseName'), '/', variables('cosmosDbContainers')[copyIndex('cosmosDbContainersCopy')].name)]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2020-04-01",
+      "properties": {
+        "resource": {
+          "id": "[variables('cosmosDbContainers')[copyIndex('cosmosDbContainersCopy')].name]",
+          "partitionKey": {
+            "paths": [
+              "[variables('cosmosDbContainers')[copyIndex('cosmosDbContainersCopy')].partitionKeyPath]"
+            ]
+          }
+        },
+        "options": {}
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('cosmosDbAccountName'), variables('cosmosDbDatabaseName'))]"
+      ],
+      "copy": {
+        "name": "cosmosDbContainersCopy",
+        "count": "[length(variables('cosmosDbContainers'))]"
       }
     }
   ],
