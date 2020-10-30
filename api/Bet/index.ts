@@ -6,7 +6,7 @@ import { GameManager, GlobalResult, LineUser, PlayerResult, Color } from "../cor
 
 type HttpRequestBetBody = {
   token: string
-  selected_color: Color
+  selectedColor: Color
 };
 
 type HttpRequestBetParams = {
@@ -47,7 +47,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     return;
   }
 
-  if (!req.body.selected_color || !GameManager.validColorType(req.body.selected_color)) {
+  if (!req.body.selectedColor || !GameManager.validColorType(req.body.selectedColor)) {
     context.res = {
       status: 400,
       body: "Selected color is missing or invalid"
@@ -109,26 +109,26 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
   // Judge
   let matched = false;
-  let win_streak_count = 0;
-  if (lastGlobalResult && lastGlobalResult.selected_color == req.body.selected_color) {
+  let winStreakCount = 0;
+  if (lastGlobalResult && lastGlobalResult.selectedColor == req.body.selectedColor) {
     matched = true;
-    win_streak_count = ++lastPlayerResult.win_streak_count;
+    winStreakCount = ++lastPlayerResult.winStreakCount;
   }
 
   const playerResult: PlayerResult = {
     lineUser,
-    selected_color: req.body.selected_color,
-    previous_color: lastGlobalResult.selected_color,
+    selectedColor: req.body.selectedColor,
+    previousColor: lastGlobalResult.selectedColor,
     matched,
-    win_streak_count
+    winStreakCount
   };
 
   const globalResult: GlobalResult = {
     stage: {
       id: req.params.stageId
     },
-    selected_color: req.body.selected_color,
-    previous_color: lastGlobalResult.selected_color,
+    selectedColor: req.body.selectedColor,
+    previousColor: lastGlobalResult.selectedColor,
     matched
   };
 

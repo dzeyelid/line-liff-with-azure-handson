@@ -5,18 +5,18 @@ export type Stage = {
 export type GlobalResult = {
   id?: string
   stage: Stage
-  selected_color: Color
-  previous_color: Color
+  selectedColor: Color
+  previousColor: Color
   matched: boolean
 }
 
 export type PlayerResult = {
   lineUser: LineUser
   id?: string
-  selected_color: Color
-  previous_color: Color
+  selectedColor: Color
+  previousColor: Color
   matched: boolean
-  win_streak_count: number
+  winStreakCount: number
 }
 
 export type LineUser = {

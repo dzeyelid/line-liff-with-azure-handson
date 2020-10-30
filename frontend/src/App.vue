@@ -1,19 +1,16 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
   <liff-dev />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import liff from "@line/liff";
-import HelloWorld from "./components/HelloWorld.vue";
 import LiffDev from "./components/LiffDev.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    HelloWorld,
     LiffDev
   },
 });
