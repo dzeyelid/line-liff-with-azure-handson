@@ -1,6 +1,8 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <liff-dev />
+  <div class="">
+    <img alt="Vue logo" src="./assets/logo.png" class="mx-auto" />
+    <liff-dev />
+  </div>
 </template>
 
 <script lang="ts">
@@ -16,7 +18,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="postcss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
