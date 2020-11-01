@@ -1,8 +1,5 @@
 <template>
-  <div class="">
-    <img alt="Vue logo" src="./assets/logo.png" class="mx-auto" />
-    <liff-dev />
-  </div>
+  <liff-dev />
 </template>
 
 <script lang="ts">
