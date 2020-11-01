@@ -10,6 +10,7 @@
     <button @click="bet('blue')" :disabled="!isReady">Blue</button>
     <button @click="bet('yellow')" :disabled="!isReady">Yellow</button>
     <pre>{{ response }}</pre>
+    <div class="bg-blue-500">button</div>
   </div>
 </template>
 
@@ -81,3 +82,4 @@ export default defineComponent({
   }
 });
 </script>
+
