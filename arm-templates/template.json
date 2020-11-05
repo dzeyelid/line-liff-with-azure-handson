@@ -16,14 +16,14 @@
         "westus2"
       ]
     },
-    "staticWebAppSku": {
+    "staticWebAppSkuTier": {
       "type": "string",
       "defaultValue": "Free",
       "allowedValues": [
         "Free"
       ]
     },
-    "staticWebAppSkucode": {
+    "staticWebAppSkuName": {
       "type": "string",
       "defaultValue": "Free",
       "allowedValues": [
@@ -33,15 +33,18 @@
     "staticWebAppRepositoryUrl": {
       "type": "string",
       "metadata": {
-        "description": "Set https url"
+        "description": "Set GitHub repository URL like https://github.com/<owner>/<repository>."
       }
     },
     "staticWebAppRepositoryToken": {
-      "type": "securestring"
+      "type": "securestring",
+      "metadata": {
+        "description": "Set GitHub personal access token with public_repo scope."
+      }
     },
     "staticWebAppBranch": {
       "type": "string",
-      "defaultValue": "master"
+      "defaultValue": "main"
     },
     "staticWebAppAppLocation": {
       "type": "string",
@@ -102,8 +105,8 @@
         }
       },
       "sku": {
-        "Tier": "[parameters('staticWebAppSku')]",
-        "Name": "[parameters('staticWebAppSkucode')]"
+        "Tier": "[parameters('staticWebAppSkuTier')]",
+        "Name": "[parameters('staticWebAppSkuName')]"
       }
     },
     {
