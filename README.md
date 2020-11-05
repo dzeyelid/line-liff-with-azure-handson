@@ -1,6 +1,16 @@
-# LIFF dev
+# Azure Static Web Apps と Cosmos DB で作る LIFF アプリ
 
-## How to prepare
+## 構成
+
+TODO: 構成図を添付する
+
+## セルフペースドハンズオン
+
+ご自身のペースでトライするには、[セルフペースドハンズオン](./docs/self-paced-handson.md)の資料をご利用ください。
+
+## 未整理
+
+### How to prepare
 
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=linux%2Cts%2Cbash#v2
 
