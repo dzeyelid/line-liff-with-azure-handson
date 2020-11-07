@@ -69,7 +69,15 @@ LIFFアプリを追加すると、「LIFF ID」が発行されます。のちに
 
 [本リポジトリ](https://github.com/dzeyelid/line-liff-with-azure-handson) のトップページから、上部の「Use this tempalte」ボタンを選択し、このリポジトリテンプレートをベースにリポジトリを作成してください。
 
-![](./images/github-repository_create-repository-from-template.png)
+![](./images/github-repository_create-repository-from-template_001.png)
+
+下記を入力し、「Create repository from template」ボタンを選択しリポジトリを作成します。
+
+- 「Repository name」に、任意のリポジトリ名を入力します。
+- 「Public」を選択します。
+- 「Include all branches」はチェックしません。
+
+![](./images/github-repository_create-repository-from-template_002.png)
 
 ## GitHub の Personal access token を生成する
 
@@ -105,23 +113,101 @@ Azure Static Web Apps と Azure Cosmos DB をデプロイします。
 - 「Static Web App Branch」「Static Web App App Location」「Static Web App Api Location」「Static Web App App Artifact Location」は変更しません。
 - 「Static Web App Exists」「Cosmos Db Enable Free Tier」「Cosmos Db Database Throughput」はそのままで構いません。
 
-![]()
+![](./images/azure-portal_deployment_001.png)
+![](./images/azure-portal_deployment_002.png)
 
 入力内容を確認し、「Create」ボタンを選択しデプロイを実行します。
 
-![]()
+![](./images/azure-portal_deployment_003.png)
 
 デプロイが完了するまでしばらく時間がかかります。
 
-![]()
+デプロイが完了すると下記の画面に遷移します。「Go to resource group」ボタンを選択し、作成したリソースグループに移動します。
+
+![](./images/azure-portal_deployment_004.png)
+
+![](./images/azure-portal_resource-group.png)
+
+## Azure Static Web Apps の Functions の Application settings を設定する
+
+Azure Static Web Apps の Functions の Application settings の設定を行います。
+
+このうち Cosmos DB の接続文字列が必要なので、先に取得しておきましょう。
+
+まず、リソースグループのリソース一覧から Cosmos DB を選択し、開きましょう。
+
+![](./images/azure-portal_get-cosmosdb-connstring_001.png)
+
+Cosmos DB の画面で、左メニューから「Keys」を選択します。
+
+![](./images/azure-portal_get-cosmosdb-connstring_002.png)
+
+Cosmos DB のキー及び接続文字列が表示されます。「Read-write Keys」タブの「PRIMARY CONNECTION STRING」の値をコピーし控えておきましょう。
+
+![](./images/azure-portal_get-cosmosdb-connstring_003.png)
+
+それでは、Static Web Apps の設定に進みましょう。
+
+まず、リソースグループの画面に戻ります。前述の画面空移動するには、画面上部のリソースグループ名の部分を選択すると、リソースグループに遷移できます。
+
+![](./images/azure-portal_get-cosmosdb-connstring_004.png)
+
+リソースグループの画面で、Static Web Apps を選択し開きます。
+
+![](./images/azure-portal_static-web-apps_set-func-app-settings_001.png)
+
+| Variable name | value |
+|----|----|
+| `COSMOS_DB_CONNECTION_STRING` | Cosmos DB の接続文字列（Connection string） |
+| `COSMOS_DB_CONTAINER_ID_GLOBAL_RESULTS` | `global-results` |
+| `COSMOS_DB_CONTAINER_ID_PLAYER_RESULTS` | `player-results` |
+| `COSMOS_DB_DATABASE_ID` | `games` |
 
 ## GitHub リポジトリの Secrets を設定する
+
+GitHub Actions のワークフローによる Azure Static Web Apps のデプロイに必要な Secret を設定します。
+
+作成した GitHub リポジトリの「Settings」から「Secrets」を開きましょう。
+
+![](./images/github_secrets_001.png)
+
+すると、すでにひとつ `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_000000000` というような secret が作成されていることがわかります。これは、Azure Static Web Apps のリソースをデプロイしたときに自動的に作成された secret です。ワークフローはこの secret を用ることによってコードを Azure Static Web Apps にデプロイできるようになります。
+
+![](./images/github_secrets_002.png)
+
+もうひとつ secret を追加しましょう。
+
+「New secret」ボタンを選択し、secret 作成画面を開きます。
+
+![](./images/github_secrets_003.png)
+
+「Name」に `VUE_APP_LIFF_ID` を指定し、「Value」に前の手順で控えた「LIFF ID」を指定し、「Add secret」ボタンを選択して保存します。
+
+![](./images/github_secrets_004.png)
+
+## GitHub リポジトリのワークフローを修正する
+
+次に、ワークフローを修正します。GitHub のリポジトリの `.github/workflows` ディレクトリを開きましょう。
+
+![](./images/github_edit-workflow_001.png)
+
+`.github/workflows` には、2つのワークフローがあることがわかります。
+
+Azure Static Web Apps はデプロイされると指定したリポジトリに `azure-static-web-apps-xxx-xxx-000000000.yml` という様なファイル名のワークフローを作成します。
+
+![](./images/github_edit-workflow_002.png)
+
+`azure-static-web-apps-xxx-xxx-000000000.yml` を開いてみると、すでに `Azure/static-web-apps-deploy@v0.0.1-preview` という Azure Static Web Apps にデプロイするための GitHub アクションが設定されていることがわかります。
+
+先ほど確認した secret `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_000000000` もここで利用されていることがわかります。
+
+さて、本アプリを正しくデプロイするために一部編集します。
 
 
 LIFF ID を設定する
 
-また、デプロイが終わると、指定した GitHub リポジトリの Secret に新しい Secret が生成されます。
 これをワークフローに設定します。
+
 
 ----
 
