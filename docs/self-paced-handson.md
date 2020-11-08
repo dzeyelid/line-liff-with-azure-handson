@@ -18,8 +18,14 @@
 
 1. LINE アカウントで LINEログインのチャネルを作成する
 1. GitHub リポジトリをテンプレートから作成する
-1. Azure にリソースをデプロイする
-2. LIFF にフロントエンドのURLを設定する
+1. GitHub の Personal access token を生成する
+1. Azure Static Web Apps と Cosmos DB をデプロイする
+1. Azure Static Web Apps の Functions の Application settings を設定する
+1. GitHub リポジトリの Secrets を設定する
+1. GitHub リポジトリのワークフローを修正する
+1. GitHub アクションを確認する
+1. LINE DevelopersコンソールでエンドポイントURLを設定する
+1. 動作確認をする
 
 ## LINE アカウントで LINEログインのチャネルを作成する
 
@@ -171,7 +177,7 @@ GitHub Actions のワークフローによる Azure Static Web Apps のデプロ
 
 ![](./images/github_secrets_001.png)
 
-すると、すでにひとつ `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_000000000` というような secret が作成されていることがわかります。これは、Azure Static Web Apps のリソースをデプロイしたときに自動的に作成された secret です。ワークフローはこの secret を用ることによってコードを Azure Static Web Apps にデプロイできるようになります。
+すると、すでにひとつ `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_123456789` というような secret が作成されていることがわかります。これは、Azure Static Web Apps のリソースをデプロイしたときに自動的に作成された secret です。ワークフローはこの secret を用ることによってコードを Azure Static Web Apps にデプロイできるようになります。
 
 ![](./images/github_secrets_002.png)
 
@@ -181,7 +187,7 @@ GitHub Actions のワークフローによる Azure Static Web Apps のデプロ
 
 ![](./images/github_secrets_003.png)
 
-「Name」に `VUE_APP_LIFF_ID` を指定し、「Value」に前の手順で控えた「LIFF ID」を指定し、「Add secret」ボタンを選択して保存します。
+「Name」に `LIFF_ID` を指定し、「Value」に前の手順で控えた「LIFF ID」を指定し、「Add secret」ボタンを選択して保存します。
 
 ![](./images/github_secrets_004.png)
 
@@ -191,28 +197,123 @@ GitHub Actions のワークフローによる Azure Static Web Apps のデプロ
 
 ![](./images/github_edit-workflow_001.png)
 
-`.github/workflows` には、2つのワークフローがあることがわかります。
+`.github/workflows` には、2つのワークフローがあります。
 
-Azure Static Web Apps はデプロイされると指定したリポジトリに `azure-static-web-apps-xxx-xxx-000000000.yml` という様なファイル名のワークフローを作成します。
+このうち、 `deploy-azure-static-web-apps.yml` は元リポジトリで使用していたものなので、削除しておきましょう。
 
 ![](./images/github_edit-workflow_002.png)
 
-`azure-static-web-apps-xxx-xxx-000000000.yml` を開いてみると、すでに `Azure/static-web-apps-deploy@v0.0.1-preview` という Azure Static Web Apps にデプロイするための GitHub アクションが設定されていることがわかります。
+`deploy-azure-static-web-apps.yml` を開き、ごみ箱のマークを選択しファイルを削除します。
 
-先ほど確認した secret `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_000000000` もここで利用されていることがわかります。
+![](./images/github_edit-workflow_003.png)
+
+ここでは、適宜コミットタイトルとディスクリプションを入力し、「Commit changes」ボタンを選択し、削除をコミットします。なお、実際のコミットの作法は各自・各プロジェクトに従ってください。
+
+![](./images/github_edit-workflow_004.png)
+
+つぎに、もう一方の `azure-static-web-apps-xxx-xxx-123456789.yml` というようなファイル名のワークフローは、Azure Static Web Apps のデプロイ時に生成されたものです。（以降、`azure-static-web-apps-<suffix>.yml` と表記します。）
+
+![](./images/github_edit-workflow_004.png)
+
+この `azure-static-web-apps-<suffix>.yml` をみてみましょう。
+
+すでに `Azure/static-web-apps-deploy@v0.0.1-preview` という Azure Static Web Apps にデプロイするための GitHub アクションが設定されていることがわかります。
+
+そして、このアクションのパラメータ `azure_static_web_apps_api_token` には、先ほど確認した secret `AZURE_STATIC_WEB_APPS_API_TOKEN_XXXX_XXXX_123456789` が利用されていることもわかります。
 
 さて、本アプリを正しくデプロイするために一部編集します。
 
+GitHub で扱いファイルを編集するには多くの方法がありますが、ここでは GitHub 上で直接編集します。ファイルの右上にある鉛筆のマーク（Edit this file という注釈）を選択して、編集画面に遷移します。
 
-LIFF ID を設定する
+![](./images/github_edit-workflow_005.png)
 
-これをワークフローに設定します。
+GitHub 上でワークフローファイルを編集するときは、このように GitHub アクションが編集しやすいUIを利用できます。
+
+![](./images/github_edit-workflow_006.png)
+
+「Azure/static-web-apps-deploy」アクションの実行時に、環境変数として `VUE_APP_LIFF_ID` を渡したいので、下記の設定を追加します。
+
+```yml
+env:
+  VUE_APP_LIFF_ID: ${{ secrets.LIFF_ID }}
+```
+
+追加する位置は、 `with:` と同階層です。
+
+```diff
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v0.0.1-preview
+        with:
+        ...
+          ###### End of Repository/Build Configurations ######
++       env:
++         VUE_APP_LIFF_ID: ${{ secrets.LIFF_ID }}
+```
+
+![](./images/github_edit-workflow_007.png)
+
+GitHubアクションの利用については、こちらをご参考ください。
+
+- [GitHub Actions 入門 - GitHub Docs](https://docs.github.com/ja/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions)
+
+また、「Azure/static-web-apps-deploy」アクションの詳細はこちらをご参照ください。
+
+- [Azure Static Web Apps Deploy · Actions · GitHub Marketplace](https://github.com/marketplace/actions/azure-static-web-apps-deploy)
+
+ファイルの編集ができたら、コミットします。ここでは、「Start commit」ボタンを選択し、コミットタイトルやディスクリプションを適宜入力の上、「Commit changes」ボタンを選択しコミットします。なお、実際のコミットの作法は各自・各プロジェクトに従ってください。
+
+![](./images/github_edit-workflow_008.png)
+
+## GitHub アクションを確認する
+
+コミットを終えると、このワークフローが実行されます。（ `on.push.branches: [main]` のトリガが設定されているため）
+
+実行内容を見てみましょう。「Actions」タブを開くとこれまでに実行されたワークフローの一覧が表示されます。
+
+実行中のワークフロー（黄色いマーク）を開いてみましょう。
+
+![](./images/github_workflow_001.png)
+
+「Buid and Deploy Job」を開くと各ステップを見ることができます。「Build And Deploy」を開くと、Azure Static Web Apps へコードをデプロイする様子を確認することができます。
+
+![](./images/github_workflow_002.png)
+
+下の方までスクロールし、デプロイが成功していると、このようにデプロイされたURL `https://<prefix>.azurestaticapps.net/` が表示されます。（URLは各環境で異なります。）
+
+![](./images/github_workflow_003.png)
+
+このURLをコピーして控えておいてください。
+
+## LINE DevelopersコンソールでエンドポイントURLを設定する
+
+URLを開く前に、最後の仕上げがあります。
+
+[LINE Developersコンソール](https://developers.line.biz/console/) にもどり、作成したLIFFアプリの詳細画面に戻ります。 
+
+「エンドポイントURL」の「編集」ボタンを選択し、先ほど表示されていた Azure Static Web Apps のURLに置き換えます。「更新」ボタンを選択し、保存しましょう。
+
+![](./images/line-devepolers-console_liff-setting_004.png)
+
+## 動作確認をする
+
+ここまで完了しましたら、LIFF URL を開いてみましょう！LINEアプリがインストールされているスマートフォン、あるいは外部ブラウザでURLを開きます。
+
+![](./images/line-devepolers-console_liff-setting_005.png)
+
+スマートフォンで開いた場合は、LINEアプリが起動しこのように表示されます。
+
+![](./images/liff-app_on-line_001.png)
 
 
-----
+「Allow」を選択し、許可することで LIFFアプリを利用できるようになります。
 
-### メモ
+![](./images/liff-app_on-line_002.png)
 
-LIFF ID は GitHub Secret に指定する
+外部ブラウザで開いた場合は、LINEログインを促され、ログインすると LIFF アプリが表示されます。
 
-コラム: テンプレートからリポジトリを作成すると、 `.github/workflows/deploy-azure-static-web-app.yml` があるので GitHub Actions のワークフローが実行されますが、 `azure_static_web_apps_api_token was not provided.` というエラーが発生し失敗します。
+![](./images/liff-app_on-web_001.png)
+
+![](./images/liff-app_on-web_002.png)
+
+Congratulation!! :tada:
