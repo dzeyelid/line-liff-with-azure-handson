@@ -162,12 +162,24 @@ Cosmos DB のキー及び接続文字列が表示されます。「Read-write Ke
 
 ![](./images/azure-portal_static-web-apps_set-func-app-settings_001.png)
 
+左のメニューの「Settings」から「Configuration」を開きます。ここでは、各 Environment に対して、Application settings として環境変数を設定できます。
+
+![](./images/azure-portal_static-web-apps_set-func-app-settings_002.png)
+
+下記 4つ環境変数を登録します。「+ Add」を選択し、一つずつ登録していきましょう。
+
 | Variable name | value |
 |----|----|
 | `COSMOS_DB_CONNECTION_STRING` | Cosmos DB の接続文字列（Connection string） |
 | `COSMOS_DB_CONTAINER_ID_GLOBAL_RESULTS` | `global-results` |
 | `COSMOS_DB_CONTAINER_ID_PLAYER_RESULTS` | `player-results` |
 | `COSMOS_DB_DATABASE_ID` | `games` |
+
+![](./images/azure-portal_static-web-apps_set-func-app-settings_003.png)
+
+4つの環境変数を登録し終えたら、忘れずに「Save」ボタンを選択し保存してください。
+
+![](./images/azure-portal_static-web-apps_set-func-app-settings_004.png)
 
 ## GitHub リポジトリの Secrets を設定する
 
