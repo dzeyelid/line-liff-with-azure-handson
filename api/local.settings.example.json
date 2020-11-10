@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "COSMOS_DB_CONNECTION_STRING": "AccountEndpoint=https://<cosmos db name>.documents.azure.com:443/;AccountKey=<cosmos db key>;",
+    "COSMOS_DB_DATABASE_ID": "games",
+    "COSMOS_DB_CONTAINER_ID_GLOBAL_RESULTS": "global-results",
+    "COSMOS_DB_CONTAINER_ID_PLAYER_RESULTS": "player-results"
+  },
+  "Host": {
+    "CORS": "*"
+  }
+}

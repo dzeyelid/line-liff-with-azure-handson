@@ -118,7 +118,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   const playerResult: PlayerResult = {
     lineUser,
     selectedColor: req.body.selectedColor,
-    previousColor: lastGlobalResult.selectedColor,
+    previousColor: lastGlobalResult ? lastGlobalResult.selectedColor : null,
     matched,
     winStreakCount
   };
@@ -128,7 +128,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
       id: req.params.stageId
     },
     selectedColor: req.body.selectedColor,
-    previousColor: lastGlobalResult.selectedColor,
+    previousColor: lastGlobalResult ? lastGlobalResult.selectedColor : null,
     matched
   };
 
