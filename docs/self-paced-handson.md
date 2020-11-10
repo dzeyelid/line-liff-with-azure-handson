@@ -225,7 +225,7 @@ GitHub Actions のワークフローによる Azure Static Web Apps のデプロ
 
 つぎに、もう一方の `azure-static-web-apps-xxx-xxx-123456789.yml` というようなファイル名のワークフローは、Azure Static Web Apps のデプロイ時に生成されたものです。（以降、`azure-static-web-apps-<suffix>.yml` と表記します。）
 
-![](./images/github_edit-workflow_004.png)
+![](./images/github_edit-workflow_005.png)
 
 この `azure-static-web-apps-<suffix>.yml` をみてみましょう。
 
@@ -237,11 +237,11 @@ GitHub Actions のワークフローによる Azure Static Web Apps のデプロ
 
 GitHub で扱いファイルを編集するには多くの方法がありますが、ここでは GitHub 上で直接編集します。ファイルの右上にある鉛筆のマーク（Edit this file という注釈）を選択して、編集画面に遷移します。
 
-![](./images/github_edit-workflow_005.png)
+![](./images/github_edit-workflow_006.png)
 
 GitHub 上でワークフローファイルを編集するときは、このように GitHub アクションが編集しやすいUIを利用できます。
 
-![](./images/github_edit-workflow_006.png)
+![](./images/github_edit-workflow_007.png)
 
 「Azure/static-web-apps-deploy」アクションの実行時に、環境変数として `VUE_APP_LIFF_ID` を渡したいので、下記の設定を追加します。
 
@@ -263,7 +263,7 @@ env:
 +         VUE_APP_LIFF_ID: ${{ secrets.LIFF_ID }}
 ```
 
-![](./images/github_edit-workflow_007.png)
+![](./images/github_edit-workflow_008.png)
 
 GitHubアクションの利用については、こちらをご参考ください。
 
@@ -275,7 +275,7 @@ GitHubアクションの利用については、こちらをご参考くださ�
 
 ファイルの編集ができたら、コミットします。ここでは、「Start commit」ボタンを選択し、コミットタイトルやディスクリプションを適宜入力の上、「Commit changes」ボタンを選択しコミットします。なお、実際のコミットの作法は各自・各プロジェクトに従ってください。
 
-![](./images/github_edit-workflow_008.png)
+![](./images/github_edit-workflow_009.png)
 
 ## GitHub アクションを確認する
 
