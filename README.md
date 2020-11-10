@@ -25,7 +25,7 @@ Azure Static Web Apps でLIFFで構成した静的サイトをホストし、デ
 
 ### Azure Functions
 
-- [](https://docs.microsoft.com/ja-jp/azure/azure-functions/)
+- [Azure Functions のドキュメント | Microsoft Docs](https://docs.microsoft.com/ja-jp/azure/azure-functions/)
 - [価格 - Functions | Microsoft Azure](https://azure.microsoft.com/ja-jp/pricing/details/functions/)
 
 ### Azure Cosmos DB
